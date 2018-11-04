@@ -1,0 +1,15 @@
+/nbproject/private/
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.jar
+*.json
+#directories
+build/
+dist/
+
