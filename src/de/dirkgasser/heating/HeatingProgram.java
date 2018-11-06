@@ -95,6 +95,42 @@ public class HeatingProgram {
     public HeatDay[] getHeatDay() {
         return heatDay;
     }
+
+    public int getNoMovetoAbsent() {
+        return noMovetoAbsent;
+    }
+
+    public int getMoveToBeThereMin() {
+        return moveToBeThereMin;
+    }
+
+    public double getAlarmhumidity() {
+        return alarmhumidity;
+    }
+    
+    public void setNoMovetoAbsent(int noMovetoAbsent) {
+        this.noMovetoAbsent = noMovetoAbsent;
+    }
+
+    public void setMoveToBeThereMin(int moveToBeThereMin) {
+        this.moveToBeThereMin = moveToBeThereMin;
+    }
+
+    public void setDefaultHereTemp(double defaultHereTemp) {
+        this.defaultHereTemp = defaultHereTemp;
+    }
+
+    public void setDefaultAbsentTemp(double defaultAbsentTemp) {
+        this.defaultAbsentTemp = defaultAbsentTemp;
+    }
+
+    public void setAlarmhumidity(double alarmhumidity) {
+        this.alarmhumidity = alarmhumidity;
+    }
+
+    public void setCurrentDay(int currentDay) {
+        this.currentDay = currentDay;
+    }
  
  
  
