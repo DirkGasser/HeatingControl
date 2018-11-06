@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -19,17 +20,24 @@ public class JFHeatingControl extends javax.swing.JFrame {
     private NumberFormat numberFormat;
     public HeatingProgram heatingProgram;
     private HeatDay displayedHeatDay;
+    private DateTimeFormatter dtf;
     /**
      * Creates new form JFHeatingControl
      */
     public JFHeatingControl() {
        initComponents();
+       dtf = DateTimeFormatter.ofPattern("HH:mm");
        tempToBe = 0;
        numberFormat = NumberFormat.getNumberInstance(Locale.GERMAN);
        ((DecimalFormat) numberFormat).applyPattern("###.#"); 
        heatingProgram = HeatingProgram.getHeatingProgramFromFile("Heating");
        displayedHeatDay = heatingProgram.getCurrentHeatDay();
        jLday.setText(heatingProgram.getNameOfDay());
+       jLHereDefTemp.setText(numberFormat.format(heatingProgram.getDefaultHereTemp()) + " °C ");
+       jLAbsentDefTemp.setText(numberFormat.format(heatingProgram.getDefaultAbsentTemp()) + " °C ");
+       jLMInDefAbsent.setText(String.valueOf(heatingProgram.getNoMovetoAbsent()));
+       jLTolAbsentDef.setText(String.valueOf(heatingProgram.getMoveToBeThereMin()));
+       jLHumidityDef.setText(String.valueOf(heatingProgram.getAlarmhumidity()) + " %");
        if (displayedHeatDay.getFirstStep() != null) {
             jLstartTime.setText(displayedHeatDay.getFirstStep().getStartTimeAsString());
             jLendTime.setText(displayedHeatDay.getFirstStep().getEndTimeAsString());
@@ -94,20 +102,26 @@ public class JFHeatingControl extends javax.swing.JFrame {
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jBredhereDefTemp = new javax.swing.JButton();
-        jLhereDefTemp = new javax.swing.JLabel();
+        jLHereDefTemp = new javax.swing.JLabel();
         jLAbsentDefTemp = new javax.swing.JLabel();
-        jBredhereDefTemp1 = new javax.swing.JButton();
+        jBredhAbsentDefTemp = new javax.swing.JButton();
         jBincrDefHereTemp = new javax.swing.JButton();
         jBincrDefAbsentTemp = new javax.swing.JButton();
         jBredMInDefAbsent = new javax.swing.JButton();
-        jLAbsentDefTemp1 = new javax.swing.JLabel();
+        jLMInDefAbsent = new javax.swing.JLabel();
         jBincrMInDefAbsent = new javax.swing.JButton();
+        jBredTelAbsentDef = new javax.swing.JButton();
+        jLTolAbsentDef = new javax.swing.JLabel();
+        jBincrTolAbsentDef = new javax.swing.JButton();
+        jBredMInDefHum = new javax.swing.JButton();
+        jLHumidityDef = new javax.swing.JLabel();
+        jBincrMInDefHum = new javax.swing.JButton();
 
         jLabel7.setText("jLabel7");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTabbedPane1.setFont(new java.awt.Font("Tahoma", 1, 22)); // NOI18N
+        jTabbedPane1.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         jTabbedPane1.setPreferredSize(new java.awt.Dimension(480, 320));
         jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -122,6 +136,7 @@ public class JFHeatingControl extends javax.swing.JFrame {
         jTtemptobe.setText("0 °C");
         jTtemptobe.setAutoscrolls(false);
         jTtemptobe.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jTtemptobe.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         jTtemptobe.setEnabled(false);
         jTtemptobe.setPreferredSize(new java.awt.Dimension(150, 35));
         jTtemptobe.setRequestFocusEnabled(false);
@@ -132,6 +147,7 @@ public class JFHeatingControl extends javax.swing.JFrame {
         jTtempIs.setText("0 °C");
         jTtempIs.setAutoscrolls(false);
         jTtempIs.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jTtempIs.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         jTtempIs.setEnabled(false);
         jTtempIs.setPreferredSize(new java.awt.Dimension(150, 35));
         jTtempIs.setRequestFocusEnabled(false);
@@ -141,6 +157,7 @@ public class JFHeatingControl extends javax.swing.JFrame {
         jThumidity.setText("50%");
         jThumidity.setAutoscrolls(false);
         jThumidity.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        jThumidity.setDisabledTextColor(new java.awt.Color(0, 0, 0));
         jThumidity.setEnabled(false);
         jThumidity.setPreferredSize(new java.awt.Dimension(150, 35));
         jThumidity.setRequestFocusEnabled(false);
@@ -148,7 +165,6 @@ public class JFHeatingControl extends javax.swing.JFrame {
         jBreduceTemp.setBackground(new java.awt.Color(51, 102, 255));
         jBreduceTemp.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         jBreduceTemp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/de/dirkgasser/heating/prev.png"))); // NOI18N
-        jBreduceTemp.setActionCommand("");
         jBreduceTemp.setMaximumSize(new java.awt.Dimension(43, 43));
         jBreduceTemp.setMinimumSize(new java.awt.Dimension(43, 43));
         jBreduceTemp.addActionListener(new java.awt.event.ActionListener() {
@@ -191,7 +207,7 @@ public class JFHeatingControl extends javax.swing.JFrame {
                 .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLtime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPControlLayout.createSequentialGroup()
-                        .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPControlLayout.createSequentialGroup()
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(76, 76, 76)
@@ -204,7 +220,7 @@ public class JFHeatingControl extends javax.swing.JFrame {
                                 .addComponent(jTtempIs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPControlLayout.createSequentialGroup()
                                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(142, 142, 142)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jThumidity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addComponent(jBincreaseTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -215,12 +231,17 @@ public class JFHeatingControl extends javax.swing.JFrame {
             .addGroup(jPControlLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLtime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
-                .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jBreduceTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTtemptobe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jBincreaseTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPControlLayout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jTtemptobe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPControlLayout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jBreduceTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBincreaseTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
                 .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -229,7 +250,7 @@ public class JFHeatingControl extends javax.swing.JFrame {
                 .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(jThumidity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(74, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(" Steuerung ", jPControl);
@@ -535,35 +556,108 @@ public class JFHeatingControl extends javax.swing.JFrame {
             }
         });
 
-        jLhereDefTemp.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLhereDefTemp.setText("20,5 °C");
-        jLhereDefTemp.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLhereDefTemp.setPreferredSize(new java.awt.Dimension(80, 30));
+        jLHereDefTemp.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLHereDefTemp.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLHereDefTemp.setText("20,5 °C");
+        jLHereDefTemp.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLHereDefTemp.setMinimumSize(new java.awt.Dimension(90, 30));
+        jLHereDefTemp.setPreferredSize(new java.awt.Dimension(90, 30));
 
         jLAbsentDefTemp.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLAbsentDefTemp.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLAbsentDefTemp.setText("20,5 °C");
         jLAbsentDefTemp.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLAbsentDefTemp.setPreferredSize(new java.awt.Dimension(80, 30));
+        jLAbsentDefTemp.setPreferredSize(new java.awt.Dimension(90, 30));
 
-        jBredhereDefTemp1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/de/dirkgasser/heating/prev.png"))); // NOI18N
-        jBredhereDefTemp1.setPreferredSize(new java.awt.Dimension(35, 30));
+        jBredhAbsentDefTemp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/de/dirkgasser/heating/prev.png"))); // NOI18N
+        jBredhAbsentDefTemp.setPreferredSize(new java.awt.Dimension(35, 30));
+        jBredhAbsentDefTemp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBredhAbsentDefTempActionPerformed(evt);
+            }
+        });
 
         jBincrDefHereTemp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/de/dirkgasser/heating/next.png"))); // NOI18N
         jBincrDefHereTemp.setPreferredSize(new java.awt.Dimension(35, 30));
+        jBincrDefHereTemp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBincrDefHereTempActionPerformed(evt);
+            }
+        });
 
         jBincrDefAbsentTemp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/de/dirkgasser/heating/next.png"))); // NOI18N
         jBincrDefAbsentTemp.setPreferredSize(new java.awt.Dimension(35, 30));
+        jBincrDefAbsentTemp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBincrDefAbsentTempActionPerformed(evt);
+            }
+        });
 
         jBredMInDefAbsent.setIcon(new javax.swing.ImageIcon(getClass().getResource("/de/dirkgasser/heating/prev.png"))); // NOI18N
         jBredMInDefAbsent.setPreferredSize(new java.awt.Dimension(35, 30));
+        jBredMInDefAbsent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBredMInDefAbsentActionPerformed(evt);
+            }
+        });
 
-        jLAbsentDefTemp1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jLAbsentDefTemp1.setText("5");
-        jLAbsentDefTemp1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jLAbsentDefTemp1.setPreferredSize(new java.awt.Dimension(80, 30));
+        jLMInDefAbsent.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLMInDefAbsent.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLMInDefAbsent.setText("5");
+        jLMInDefAbsent.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLMInDefAbsent.setPreferredSize(new java.awt.Dimension(90, 30));
 
         jBincrMInDefAbsent.setIcon(new javax.swing.ImageIcon(getClass().getResource("/de/dirkgasser/heating/next.png"))); // NOI18N
         jBincrMInDefAbsent.setPreferredSize(new java.awt.Dimension(35, 30));
+        jBincrMInDefAbsent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBincrMInDefAbsentActionPerformed(evt);
+            }
+        });
+
+        jBredTelAbsentDef.setIcon(new javax.swing.ImageIcon(getClass().getResource("/de/dirkgasser/heating/prev.png"))); // NOI18N
+        jBredTelAbsentDef.setPreferredSize(new java.awt.Dimension(35, 30));
+        jBredTelAbsentDef.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBredTelAbsentDefActionPerformed(evt);
+            }
+        });
+
+        jLTolAbsentDef.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLTolAbsentDef.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLTolAbsentDef.setText("5");
+        jLTolAbsentDef.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLTolAbsentDef.setPreferredSize(new java.awt.Dimension(90, 30));
+
+        jBincrTolAbsentDef.setIcon(new javax.swing.ImageIcon(getClass().getResource("/de/dirkgasser/heating/next.png"))); // NOI18N
+        jBincrTolAbsentDef.setPreferredSize(new java.awt.Dimension(35, 30));
+        jBincrTolAbsentDef.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBincrTolAbsentDefActionPerformed(evt);
+            }
+        });
+
+        jBredMInDefHum.setIcon(new javax.swing.ImageIcon(getClass().getResource("/de/dirkgasser/heating/prev.png"))); // NOI18N
+        jBredMInDefHum.setPreferredSize(new java.awt.Dimension(35, 30));
+        jBredMInDefHum.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBredMInDefHumActionPerformed(evt);
+            }
+        });
+
+        jLHumidityDef.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLHumidityDef.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLHumidityDef.setText("60 %");
+        jLHumidityDef.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLHumidityDef.setPreferredSize(new java.awt.Dimension(90, 30));
+
+        jBincrMInDefHum.setIcon(new javax.swing.ImageIcon(getClass().getResource("/de/dirkgasser/heating/next.png"))); // NOI18N
+        jBincrMInDefHum.setPreferredSize(new java.awt.Dimension(35, 30));
+        jBincrMInDefHum.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBincrMInDefHumActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPDefaultsLayout = new javax.swing.GroupLayout(jPDefaults);
         jPDefaults.setLayout(jPDefaultsLayout);
@@ -572,43 +666,43 @@ public class JFHeatingControl extends javax.swing.JFrame {
             .addGroup(jPDefaultsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPDefaultsLayout.createSequentialGroup()
-                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPDefaultsLayout.createSequentialGroup()
-                                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jBredhereDefTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPDefaultsLayout.createSequentialGroup()
-                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jBredhereDefTemp1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPDefaultsLayout.createSequentialGroup()
-                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jBredMInDefAbsent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
                         .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPDefaultsLayout.createSequentialGroup()
+                                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 272, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
                             .addGroup(jPDefaultsLayout.createSequentialGroup()
-                                .addComponent(jLhereDefTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jBincrDefHereTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPDefaultsLayout.createSequentialGroup()
-                                .addComponent(jLAbsentDefTemp1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(62, 62, 62))
-                            .addGroup(jPDefaultsLayout.createSequentialGroup()
-                                .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPDefaultsLayout.createSequentialGroup()
-                                        .addComponent(jLAbsentDefTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(27, 27, 27)
-                                        .addComponent(jBincrDefAbsentTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPDefaultsLayout.createSequentialGroup()
-                                        .addGap(107, 107, 107)
-                                        .addComponent(jBincrMInDefAbsent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 0, Short.MAX_VALUE)))))
-                .addContainerGap())
+                                .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jBredhereDefTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBredhAbsentDefTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBredMInDefAbsent, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBredTelAbsentDef, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBredMInDefHum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLAbsentDefTemp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLMInDefAbsent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLTolAbsentDef, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLHereDefTemp, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLHumidityDef, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jBincrDefHereTemp, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBincrDefAbsentTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBincrMInDefAbsent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBincrTolAbsentDef, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBincrMInDefHum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18))
+                    .addGroup(jPDefaultsLayout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addGap(126, 126, 126))))
             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPDefaultsLayout.setVerticalGroup(
@@ -620,32 +714,47 @@ public class JFHeatingControl extends javax.swing.JFrame {
                 .addComponent(jLabel14)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLhereDefTemp, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPDefaultsLayout.createSequentialGroup()
-                        .addComponent(jBincrDefHereTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jBincrDefAbsentTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jBincrMInDefAbsent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPDefaultsLayout.createSequentialGroup()
-                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jBredhereDefTemp, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jBredhereDefTemp, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLAbsentDefTemp, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jBredhereDefTemp1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBredhAbsentDefTemp, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLAbsentDefTemp1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jBredMInDefAbsent, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(35, Short.MAX_VALUE))
+                            .addComponent(jBredMInDefAbsent, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jBredTelAbsentDef, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBredMInDefHum, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPDefaultsLayout.createSequentialGroup()
+                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jBincrDefHereTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLHereDefTemp, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLAbsentDefTemp, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBincrDefAbsentTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLMInDefAbsent, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBincrMInDefAbsent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLTolAbsentDef, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBincrTolAbsentDef, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLHumidityDef, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBincrMInDefHum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(" Einstellungen ", jPDefaults);
@@ -912,7 +1021,63 @@ public class JFHeatingControl extends javax.swing.JFrame {
 
     private void jBredhereDefTempActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBredhereDefTempActionPerformed
         // TODO add your handling code here:
+        heatingProgram.setDefaultHereTemp(heatingProgram.getDefaultHereTemp() - 0.5);  
+        jLHereDefTemp.setText(numberFormat.format(heatingProgram.getDefaultHereTemp()) + " °C ");
     }//GEN-LAST:event_jBredhereDefTempActionPerformed
+
+    private void jBincrDefHereTempActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBincrDefHereTempActionPerformed
+        // TODO add your handling code here:
+        heatingProgram.setDefaultHereTemp(heatingProgram.getDefaultHereTemp() + 0.5);  
+        jLHereDefTemp.setText(numberFormat.format(heatingProgram.getDefaultHereTemp()) + " °C ");
+    }//GEN-LAST:event_jBincrDefHereTempActionPerformed
+
+    private void jBredhAbsentDefTempActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBredhAbsentDefTempActionPerformed
+        // TODO add your handling code here:
+        heatingProgram.setDefaultAbsentTemp(heatingProgram.getDefaultAbsentTemp() - 0.5);  
+        jLAbsentDefTemp.setText(numberFormat.format(heatingProgram.getDefaultAbsentTemp()) + " °C ");
+    }//GEN-LAST:event_jBredhAbsentDefTempActionPerformed
+
+    private void jBincrDefAbsentTempActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBincrDefAbsentTempActionPerformed
+        // TODO add your handling code here:
+        heatingProgram.setDefaultAbsentTemp(heatingProgram.getDefaultAbsentTemp() + 0.5);  
+        jLAbsentDefTemp.setText(numberFormat.format(heatingProgram.getDefaultAbsentTemp()) + " °C ");
+    }//GEN-LAST:event_jBincrDefAbsentTempActionPerformed
+
+    private void jBredMInDefAbsentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBredMInDefAbsentActionPerformed
+        // TODO add your handling code here:
+        heatingProgram.setNoMovetoAbsent(heatingProgram.getNoMovetoAbsent() - 1);  
+        jLMInDefAbsent.setText(String.valueOf(heatingProgram.getNoMovetoAbsent()));
+    }//GEN-LAST:event_jBredMInDefAbsentActionPerformed
+
+    private void jBincrMInDefAbsentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBincrMInDefAbsentActionPerformed
+        // TODO add your handling code here:
+        heatingProgram.setNoMovetoAbsent(heatingProgram.getNoMovetoAbsent() + 1);  
+        jLMInDefAbsent.setText(String.valueOf(heatingProgram.getNoMovetoAbsent()));
+    }//GEN-LAST:event_jBincrMInDefAbsentActionPerformed
+
+    private void jBredTelAbsentDefActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBredTelAbsentDefActionPerformed
+        // TODO add your handling code here:
+        heatingProgram.setMoveToBeThereMin(heatingProgram.getMoveToBeThereMin()- 1);  
+        jLTolAbsentDef.setText(String.valueOf(heatingProgram.getMoveToBeThereMin()));
+    }//GEN-LAST:event_jBredTelAbsentDefActionPerformed
+
+    private void jBincrTolAbsentDefActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBincrTolAbsentDefActionPerformed
+        // TODO add your handling code here:
+        heatingProgram.setMoveToBeThereMin(heatingProgram.getMoveToBeThereMin()+ 1);  
+        jLTolAbsentDef.setText(String.valueOf(heatingProgram.getMoveToBeThereMin()));
+    }//GEN-LAST:event_jBincrTolAbsentDefActionPerformed
+
+    private void jBredMInDefHumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBredMInDefHumActionPerformed
+        // TODO add your handling code here:
+        heatingProgram.setAlarmhumidity(heatingProgram.getAlarmhumidity()- 1);  
+        jLHumidityDef.setText(String.valueOf(heatingProgram.getAlarmhumidity()) + " %");
+    }//GEN-LAST:event_jBredMInDefHumActionPerformed
+
+    private void jBincrMInDefHumActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBincrMInDefHumActionPerformed
+        // TODO add your handling code here:
+        heatingProgram.setAlarmhumidity(heatingProgram.getAlarmhumidity() + 1);  
+        jLHumidityDef.setText(String.valueOf(heatingProgram.getAlarmhumidity()) + " %");
+    }//GEN-LAST:event_jBincrMInDefHumActionPerformed
 
 
 
@@ -921,6 +1086,8 @@ public class JFHeatingControl extends javax.swing.JFrame {
     private javax.swing.JButton jBincrDefAbsentTemp;
     private javax.swing.JButton jBincrDefHereTemp;
     private javax.swing.JButton jBincrMInDefAbsent;
+    private javax.swing.JButton jBincrMInDefHum;
+    private javax.swing.JButton jBincrTolAbsentDef;
     private javax.swing.JButton jBincreaseTemp;
     private javax.swing.JButton jBincreaseTempAbsent;
     private javax.swing.JButton jBincreaseTempHere;
@@ -931,14 +1098,19 @@ public class JFHeatingControl extends javax.swing.JFrame {
     private javax.swing.JButton jBprevDay;
     private javax.swing.JButton jBprevTemp;
     private javax.swing.JButton jBredMInDefAbsent;
+    private javax.swing.JButton jBredMInDefHum;
+    private javax.swing.JButton jBredTelAbsentDef;
+    private javax.swing.JButton jBredhAbsentDefTemp;
     private javax.swing.JButton jBredhereDefTemp;
-    private javax.swing.JButton jBredhereDefTemp1;
     private javax.swing.JButton jBreduceTemp;
     private javax.swing.JButton jBreduceTempAbsent;
     private javax.swing.JButton jBreduceTempHere;
     private javax.swing.JLabel jLAbsentDefTemp;
-    private javax.swing.JLabel jLAbsentDefTemp1;
+    private javax.swing.JLabel jLHereDefTemp;
+    private javax.swing.JLabel jLHumidityDef;
+    private javax.swing.JLabel jLMInDefAbsent;
     private javax.swing.JLabel jLTempAbsent;
+    private javax.swing.JLabel jLTolAbsentDef;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -955,7 +1127,6 @@ public class JFHeatingControl extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLday;
     private javax.swing.JLabel jLendTime;
-    private javax.swing.JLabel jLhereDefTemp;
     private javax.swing.JLabel jLstartTime;
     private javax.swing.JLabel jLtempHere;
     private javax.swing.JLabel jLtime;
@@ -970,25 +1141,13 @@ public class JFHeatingControl extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
 //manual added code
-    public void setTime (Integer timeinSec) {
-        StringBuilder sbTime = new StringBuilder();
-        Integer hours = timeinSec / 3600;
-        Integer minutes = (timeinSec - (hours * 3600)) / 60;
-        Integer seconds = timeinSec % 60;
-        if (hours > 0) {
-            sbTime.append(hours.toString());
-            sbTime.append(":");
-        }
-        if (minutes < 10) {
-            sbTime.append("0");
-        }
-        sbTime.append(minutes.toString());
-        sbTime.append(":");
-        if (seconds < 10) {
-            sbTime.append("0");
-        }
-        sbTime.append(seconds.toString());
-        jLtime.setText(sbTime.toString());
+    public void setTime (LocalTime time) {
+        jLtime.setText(time.format(dtf));
     }
-
+    public void setTemp (double temp) {
+        jTtempIs.setText(numberFormat.format(temp) + " °C");
+    }
+     public void setHumidity (double humidity) {
+        jThumidity.setText(numberFormat.format(humidity) + " %");
+    }
 }

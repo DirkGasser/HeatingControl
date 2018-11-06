@@ -10,9 +10,10 @@ import java.io.IOException;
 public class HeatingControl {
     public static double currentTemp;
     public static double currenthumidity;
+    static public JFHeatingControl mainscreen;
     
 public static void main(String args[]) throws IOException {
-        JFHeatingControl mainscreen = new JFHeatingControl();
+        mainscreen = new JFHeatingControl();
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -37,18 +38,15 @@ public static void main(String args[]) throws IOException {
         //</editor-fold>
 
         /* Create and display the form */
-//        gpio = GpioFactory.getInstance();  
-        
-        
-//        FullScreen.fullScreen(recipeframe, false);
-/*       
-       Thread thTemp = new Thread(new TemperaturWatcher(temperaturSensor));
-       thTemp.start();
-*/
+//        gpio = GpioFactory.getInstance();     
+       
        java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 mainscreen.setVisible(true);
             }
         });
+       Thread thTemp = new Thread(new HeatingControlThread());
+       thTemp.start();
+
     }
 }
