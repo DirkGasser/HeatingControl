@@ -2,6 +2,8 @@ package de.dirkgasser.heating;
 
 
 import com.pi4j.wiringpi.Gpio;
+import de.dirkgasser.heizung.DHT11c;
+import static heizungssteuerung.Heizungssteuerung.dht11c;
 import java.time.LocalTime;
 
 /**
@@ -33,11 +35,9 @@ public class DHT11 {
         int laststate = Gpio.HIGH;
         int newstate = Gpio.HIGH;
         int j;
-        int i;
         int tries = 0;
         float c = 0;
-        int maxtry = 50;
-        int counter;
+        int maxtry = 10;
         while (tries < maxtry && c == 0)  {
             j = 0;
             dht11_dat[0] = dht11_dat[1] = dht11_dat[2] = dht11_dat[3] = dht11_dat[4] = 0;
@@ -47,20 +47,25 @@ public class DHT11 {
 // Set 1-Wire Pin of DHT11 18 millisconds to low to start output
             Gpio.pinMode(pin, Gpio.OUTPUT);
             Gpio.digitalWrite(pin, Gpio.HIGH);
-            Gpio.delay(200);
+            Gpio.delay(1000);
             Gpio.digitalWrite(pin, Gpio.LOW);
             Gpio.delay(18);
             Gpio.digitalWrite(pin, Gpio.HIGH);
 // Set GPIO Pin to input to get data
-            Gpio.pinMode(pin, Gpio.INPUT);
-            i = 0;
-            counter = 0;
+            Gpio.pinMode(pin, Gpio.INPUT);     
 //if no more signals are sended by DHT11 is identified by 1000 count cycles
-            while (i < MAXTIMINGS & counter < 1000) {
-                while (newstate == laststate & counter < 1000) {
+//Attention: "int i" has to be defined here, otherwise Java is too slow!!!!
+            for (int i = 0; i < MAXTIMINGS; i++) {
+                int counter = 0;
+//            while (i < MAXTIMINGS & counter < 1000) {
+                while (newstate == laststate) {
                     counter++;
                     Gpio.delayMicroseconds(1);
                     newstate = Gpio.digitalRead(pin);
+                    if (counter == 1000) {
+                 // fertig
+                    break;
+                    }
                 }   
                 laststate = newstate;
 
@@ -68,9 +73,8 @@ public class DHT11 {
                  // fertig
                     break;
                 }
-
+//Take only ever second signal
                 if (i >= 1 && i % 2 == 0) {
-                /* shove each bit into the storage bytes */
                     counters[j] = counter;
                     j++;
                 }
@@ -126,22 +130,22 @@ public class DHT11 {
                 }
             }
             if (j >= 39 && checkParity()) {
-                float h = (float) ((dht11_dat[0] << 8) + dht11_dat[1]) / 10;
+                float h = (float) ((dht11_dat[0] << 8) + dht11_dat[1]) / 10f;
                 if (h > 100) {
-                    h = dht11_dat[0]; // for DHT11
+                    h = (float) dht11_dat[0]; // for DHT11
                 }
-                c = (float) (((dht11_dat[2] & 0x7F) << 8) + dht11_dat[3]) / 10;
+                c = (float) (((dht11_dat[2] & 0x7F) << 8) + dht11_dat[3]) / 10f;
                 if (c > 125) {
-                    c = dht11_dat[2]; // for DHT11
+                    c = (float) dht11_dat[2]; // for DHT11
                 }
                 if ((dht11_dat[2] & 0x80) != 0) {
                  c = -c;
                 }
                 temp = c;
-                humidity = j;
+                humidity = h;
                 lastRead = LocalTime.now(); 
             } else {
-// keine Plausiblen Daten
+// Data not good 
             }
             tries ++;
         }

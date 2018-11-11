@@ -1,6 +1,10 @@
 package de.dirkgasser.heating;
 
+import com.pi4j.io.gpio.GpioController;
+import com.pi4j.io.gpio.GpioFactory;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Main Class to start application HeatingControl
@@ -11,9 +15,12 @@ public class HeatingControl {
     public static double currentTemp;
     public static double currenthumidity;
     static public JFHeatingControl mainscreen;
+    public static GpioController gpio;
+    public static MoveSensorListner moveSensor;
     
 public static void main(String args[]) throws IOException {
         mainscreen = new JFHeatingControl();
+        gpio = GpioFactory.getInstance();  
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -39,14 +46,21 @@ public static void main(String args[]) throws IOException {
 
         /* Create and display the form */
 //        gpio = GpioFactory.getInstance();     
+       Thread thTemp = new Thread(new HeatingControlThread());
        
        java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 mainscreen.setVisible(true);
             }
         });
-       Thread thTemp = new Thread(new HeatingControlThread());
+
+       try {
+                Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(HeatingControlThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
        thTemp.start();
+       moveSensor = new MoveSensorListner(gpio, 4);
 
     }
 }
