@@ -9,8 +9,8 @@ import com.google.gson.GsonBuilder;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,11 +28,13 @@ public class HeatingProgram {
     HeatDay[] heatDay = new HeatDay[10];
     WeekDays weekDays;
     int currentDay;
+    private static Object me;
+    Integer queryPos;
     
 /**
  * Create new HeatingProgram with default values
  */    
- public HeatingProgram () {
+ private HeatingProgram () {
      noMovetoAbsent = 20;
      moveToBeThereMin = 20;
      defaultHereTemp = 21;
@@ -131,27 +133,38 @@ public class HeatingProgram {
     public void setCurrentDay(int currentDay) {
         this.currentDay = currentDay;
     }
- 
+ /**
+  * read Heating Program from file 
+  * @param programName
+  * @return heating program
+  */
  
  
  public static HeatingProgram getHeatingProgramFromFile (String programName) {
-        try {
-            File recFile = new File(System.getProperty("user.home") + File.separator + programName + ".tpg");
-            if (recFile.exists() && recFile.isFile()) { 
-                Reader reader = new BufferedReader(new FileReader(System.getProperty("user.home") + File.separator + programName + ".tpg"));
-                Gson gson = new GsonBuilder().create();
-                HeatingProgram program = gson.fromJson(reader, HeatingProgram.class);
-                return program;
-            } else { 
-                return new HeatingProgram ();
+     if (me == null) {   
+     
+         try {
+                File recFile = new File(System.getProperty("user.home") + File.separator + programName + ".tpg");
+                if (recFile.exists() && recFile.isFile()) { 
+                    Reader reader = new BufferedReader(new FileReader(System.getProperty("user.home") + File.separator + programName + ".tpg"));
+                    Gson gson = new GsonBuilder().create();
+                    HeatingProgram program = gson.fromJson(reader, HeatingProgram.class);
+                    me = program;
+                    return program;
+                } else { 
+                    me = new HeatingProgram();
+                    return (HeatingProgram) me;
+                }
+            } catch (Exception e) {
+                System.out.println(e.toString());
             }
-        } catch (Exception e) {
-            System.out.println(e.toString());
-        }
-        return new HeatingProgram ();
+            return new HeatingProgram ();
+     } else {
+         return (HeatingProgram) me;
+     }        
     }
  
- public void writeHeatProgram (String programName) {
+    public void writeHeatProgram (String programName) {
        Gson gson = new GsonBuilder().setPrettyPrinting().create();
        Writer writer;
         try {
@@ -161,5 +174,64 @@ public class HeatingProgram {
         } catch (IOException ex) {
             Logger.getLogger(HeatingProgram.class.getName()).log(Level.SEVERE, null, ex);
         }     
+    }
+/**
+ * get the Temperatur which is just now wanted if someone is present
+ * @return here temperature
+ */
+    public double getMoveTempNow() {
+        HeatProgramStep heatProgramstep = getHeatProgramStepNow();
+        if (heatProgramstep != null) {
+            return heatProgramstep.getHereTemp();
+        } else {
+            return defaultHereTemp;
+        }      
+    }
+ 
+ /**
+  * get the Temperatur which is just now wanted if no one is present
+  * @return absent temperatur
+  */
+    public double getAbsentTempNow() {
+        HeatProgramStep heatProgramstep = getHeatProgramStepNow();
+        if (heatProgramstep != null) {
+            return heatProgramstep.getAbsentTemp();
+        } else {
+            return defaultAbsentTemp;
+        }      
+    }
+    
+    public HeatProgramStep getHeatProgramStepNow() {
+       int weekDay;
+       queryPos = 0;
+       weekDay = LocalDate.now().getDayOfWeek().getValue();
+       HeatProgramStep compareStep;
+       compareStep = heatDay[weekDay].getStep(0);
+       while (compareStep != null &&
+              compareStep.getEndTime().isBefore(LocalTime.now())) {
+              queryPos ++;
+              compareStep = heatDay[weekDay].getStep(queryPos);
+        }
+       if (compareStep != null &&
+           compareStep.getStartTime().isBefore(LocalTime.now())) {
+           return compareStep;
+       }
+       if (weekDay < 6) {
+           weekDay = 8; // all working days
+       } else {
+           weekDay = 9; // weekend
+       }
+       queryPos = 0;
+       compareStep = heatDay[weekDay].getStep(0);
+       while (compareStep != null &&
+              compareStep.getEndTime().isBefore(LocalTime.now())) {
+              queryPos ++;
+              compareStep = heatDay[weekDay].getStep(queryPos);
+        }
+       if (compareStep != null &&
+           compareStep.getStartTime().isBefore(LocalTime.now())) {
+           return compareStep;
+       }
+       return null;
     }
 }

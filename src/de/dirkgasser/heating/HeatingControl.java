@@ -17,10 +17,14 @@ public class HeatingControl {
     static public JFHeatingControl mainscreen;
     public static GpioController gpio;
     public static MoveSensorListner moveSensor;
+    public static HeatingProgram heatingProgram;
     
 public static void main(String args[]) throws IOException {
+        heatingProgram = HeatingProgram.getHeatingProgramFromFile("Heating"); 
+        gpio = GpioFactory.getInstance();
         mainscreen = new JFHeatingControl();
-        gpio = GpioFactory.getInstance();  
+
+        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -53,6 +57,7 @@ public static void main(String args[]) throws IOException {
                 mainscreen.setVisible(true);
             }
         });
+       moveSensor = new MoveSensorListner(gpio, 4);
 
        try {
                 Thread.sleep(3000);
@@ -60,7 +65,7 @@ public static void main(String args[]) throws IOException {
                     Logger.getLogger(HeatingControlThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
        thTemp.start();
-       moveSensor = new MoveSensorListner(gpio, 4);
+       
 
     }
 }

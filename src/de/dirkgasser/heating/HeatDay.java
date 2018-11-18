@@ -14,13 +14,16 @@ public class HeatDay {
     List<HeatProgramStep> listOfSteps = new ArrayList<>();
     private transient Iterator<HeatProgramStep> itStep = listOfSteps.iterator();
     int currentStep;
+    int currentProcessStep;
      
     public HeatDay(HeatProgramStep heatProgramStep) {
         this.addHeatStep(heatProgramStep);
         currentStep = 0;
+        currentProcessStep = 0;
     }
     public HeatDay() {
        currentStep = -1; 
+       currentProcessStep = -1;
     }
 
 /**
@@ -79,26 +82,42 @@ public class HeatDay {
  * get first heating step
  * @return first HeatProgramStep of heating day
  */     
-    public HeatProgramStep getFirstStep() {
-        currentStep = -1;
-        return this.getNextStep();
+    public HeatProgramStep getFirstStep() { 
+        if (listOfSteps.size() > 0) {
+            return listOfSteps.get(0);
+        } else {
+            return null;
+        }
     }
-    /**
- * get curren heating step
+ /**
+ * get current heating step
  * @return first HeatProgramStep of heating day
  */     
-    public HeatProgramStep getCurrentStep() {
-         if (currentStep  < listOfSteps.size() && currentStep >= 0) {
+    public HeatProgramStep getCurrentStep() {        
+        if (currentStep  < listOfSteps.size() && currentStep >= 0) {
             return listOfSteps.get(currentStep); 
-         } else {
+        } else {
              return null;
-         }
+        }
+    }
+/**
+ * get heating step
+ * @return first HeatProgramStep of heating day
+ */     
+    public HeatProgramStep getStep(int positon) {  
+        synchronized(this) {
+            if (positon  < listOfSteps.size() && positon >= 0) {
+                return listOfSteps.get(positon); 
+            } else {
+                return null;
+            }
+        }
     }
 
-    /**
-     * read previous heating step
-     * @return HeatProgramStep
-     */
+/**
+ * read previous heating step
+ * @return HeatProgramStep
+ */
     public HeatProgramStep readPrevStep() {
         if (currentStep > 0) {
             return listOfSteps.get(currentStep - 1); 
