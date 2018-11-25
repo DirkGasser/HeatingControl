@@ -42,8 +42,7 @@ public class MoveSensorListner implements GpioPinListenerDigital {
     @Override
     public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent gpdsce) {
         if (gpdsce.getState() == PinState.HIGH) {
-            System.out.println("high");
-            if (lastDetection.isAfter(LocalTime.now().minusSeconds(20))) {
+            if (lastDetection.isAfter(LocalTime.now().minusSeconds(30))) {
                detectionCount++; 
                if (detectionCount > heatingProgram.getMoveToBeThereMin()) {
                   lastMove = LocalTime.now();
@@ -64,9 +63,11 @@ public class MoveSensorListner implements GpioPinListenerDigital {
     }
     
     public void setManualMove() {
-        lastMove = LocalTime.now();
-        lastDetection = LocalTime.now();
-        detectionCount = heatingProgram.getMoveToBeThereMin() + 1; 
+        synchronized(this) {
+            lastMove = LocalTime.now();
+            lastDetection = LocalTime.now();
+            detectionCount = heatingProgram.getMoveToBeThereMin() + 1; 
+        }    
     }
     
 }

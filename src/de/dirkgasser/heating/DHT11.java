@@ -2,8 +2,6 @@ package de.dirkgasser.heating;
 
 
 import com.pi4j.wiringpi.Gpio;
-import de.dirkgasser.heizung.DHT11c;
-import static heizungssteuerung.Heizungssteuerung.dht11c;
 import java.time.LocalTime;
 
 /**

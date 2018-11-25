@@ -8,6 +8,7 @@ import java.util.Locale;
 import javax.swing.JOptionPane;
 import static de.dirkgasser.heating.HeatingControl.heatingProgram;
 import java.awt.Color;
+import static javax.swing.JOptionPane.YES_NO_OPTION;
 
 /**
  * Main Frame for heating control <br>
@@ -24,6 +25,8 @@ public class JFHeatingControl extends javax.swing.JFrame {
      */
     public JFHeatingControl() {
        initComponents();
+       this.dispose();
+       this.setUndecorated(true);
        dtf = DateTimeFormatter.ofPattern("HH:mm");
        tempToBe = 0;
        numberFormat = NumberFormat.getNumberInstance(Locale.GERMAN);
@@ -113,6 +116,7 @@ public class JFHeatingControl extends javax.swing.JFrame {
         jBredMInDefHum = new javax.swing.JButton();
         jLHumidityDef = new javax.swing.JLabel();
         jBincrMInDefHum = new javax.swing.JButton();
+        jBstop = new javax.swing.JButton();
 
         jLabel7.setText("jLabel7");
 
@@ -158,6 +162,11 @@ public class JFHeatingControl extends javax.swing.JFrame {
         jThumidity.setEnabled(false);
         jThumidity.setPreferredSize(new java.awt.Dimension(150, 35));
         jThumidity.setRequestFocusEnabled(false);
+        jThumidity.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jThumidityMouseClicked(evt);
+            }
+        });
 
         jBreduceTemp.setBackground(new java.awt.Color(51, 102, 255));
         jBreduceTemp.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
@@ -202,13 +211,12 @@ public class JFHeatingControl extends javax.swing.JFrame {
             .addGroup(jPControlLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLtime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPControlLayout.createSequentialGroup()
                         .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPControlLayout.createSequentialGroup()
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(76, 76, 76)
-                                .addComponent(jBreduceTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(89, 89, 89)
+                                .addComponent(jBreduceTemp, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jTtemptobe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPControlLayout.createSequentialGroup()
@@ -220,8 +228,11 @@ public class JFHeatingControl extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jThumidity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
-                        .addComponent(jBincreaseTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(30, Short.MAX_VALUE))
+                        .addComponent(jBincreaseTemp, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPControlLayout.createSequentialGroup()
+                        .addComponent(jLtime, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(395, Short.MAX_VALUE))))
         );
         jPControlLayout.setVerticalGroup(
             jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -233,13 +244,14 @@ public class JFHeatingControl extends javax.swing.JFrame {
                         .addGap(26, 26, 26)
                         .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(jTtemptobe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPControlLayout.createSequentialGroup()
-                        .addGap(17, 17, 17)
+                            .addComponent(jTtemptobe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(19, 19, 19))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPControlLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jBreduceTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jBincreaseTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(18, 18, 18)
+                            .addComponent(jBincreaseTemp, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jBreduceTemp, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)))
                 .addGroup(jPControlLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(jTtempIs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -656,14 +668,17 @@ public class JFHeatingControl extends javax.swing.JFrame {
             }
         });
 
+        jBstop.setText("Stop");
+        jBstop.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBstopActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPDefaultsLayout = new javax.swing.GroupLayout(jPDefaults);
         jPDefaults.setLayout(jPDefaultsLayout);
         jPDefaultsLayout.setHorizontalGroup(
             jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPDefaultsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel8)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jLabel14, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPDefaultsLayout.createSequentialGroup()
                 .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -698,6 +713,12 @@ public class JFHeatingControl extends javax.swing.JFrame {
                     .addComponent(jBincrTolAbsentDef, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jBincrMInDefHum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18))
+            .addGroup(jPDefaultsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel8)
+                    .addComponent(jBstop))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPDefaultsLayout.setVerticalGroup(
             jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -748,7 +769,9 @@ public class JFHeatingControl extends javax.swing.JFrame {
                         .addGroup(jPDefaultsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLHumidityDef, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jBincrMInDefHum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addComponent(jBstop)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab(" Einstellungen ", jPDefaults);
@@ -768,13 +791,19 @@ public class JFHeatingControl extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBreduceTempActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBreduceTempActionPerformed
+        tempToBe = Double.parseDouble(jTtemptobe.getText().replaceAll(",", ".").replaceAll("°C", ""));
         tempToBe = tempToBe - 0.5;   
         jTtemptobe.setText(numberFormat.format(tempToBe) + " °C ");
+        HeatingControlThread.setManualTemp(tempToBe);
     }//GEN-LAST:event_jBreduceTempActionPerformed
 
     private void jBincreaseTempActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBincreaseTempActionPerformed
-        tempToBe = tempToBe + 0.5;   
-        jTtemptobe.setText(numberFormat.format(tempToBe) + " °C ");
+         tempToBe = Double.parseDouble(jTtemptobe.getText().replaceAll(",", ".").replaceAll("°C", ""));
+        if (tempToBe < 26) {
+            tempToBe = tempToBe + 0.5;   
+            jTtemptobe.setText(numberFormat.format(tempToBe) + " °C ");
+            HeatingControlThread.setManualTemp(tempToBe);
+        }
     }//GEN-LAST:event_jBincreaseTempActionPerformed
 
     private void jBprevDayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBprevDayActionPerformed
@@ -1073,6 +1102,18 @@ public class JFHeatingControl extends javax.swing.JFrame {
         jLHumidityDef.setText(String.valueOf(heatingProgram.getAlarmhumidity()) + " %");
     }//GEN-LAST:event_jBincrMInDefHumActionPerformed
 
+    private void jBstopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBstopActionPerformed
+        // TODO add your handling code here:
+        if (JOptionPane.showConfirmDialog(this, "wirklich beenden?", "Ende",YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            this.dispose();
+        }
+    }//GEN-LAST:event_jBstopActionPerformed
+
+    private void jThumidityMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jThumidityMouseClicked
+        // TODO add your handling code here:
+        HeatingControlThread.setAlarmOff();
+    }//GEN-LAST:event_jThumidityMouseClicked
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1099,6 +1140,7 @@ public class JFHeatingControl extends javax.swing.JFrame {
     private javax.swing.JButton jBreduceTemp;
     private javax.swing.JButton jBreduceTempAbsent;
     private javax.swing.JButton jBreduceTempHere;
+    private javax.swing.JButton jBstop;
     private javax.swing.JLabel jLAbsentDefTemp;
     private javax.swing.JLabel jLHereDefTemp;
     private javax.swing.JLabel jLHumidityDef;
@@ -1147,13 +1189,18 @@ public class JFHeatingControl extends javax.swing.JFrame {
      public void setHumidity (double humidity) {
         jThumidity.setText(numberFormat.format(humidity) + " %");
     }
-     public void setHeaterSignal(boolean on) {
+    public void setHeaterSignal(boolean on) {
          if (on == true) {
              jTtemptobe.setBackground(Color.red);
-             System.out.println("red");
          } else {
              jTtemptobe.setBackground(Color.white); 
-             System.out.println("white");
          }
-     }
+    }
+    public void setHumiditySignal(boolean on) {
+         if (on == true) {
+             jThumidity.setBackground(Color.red);
+         } else {
+             jThumidity.setBackground(Color.white); 
+         }
+    }
 }

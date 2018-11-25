@@ -180,12 +180,14 @@ public class HeatingProgram {
  * @return here temperature
  */
     public double getMoveTempNow() {
-        HeatProgramStep heatProgramstep = getHeatProgramStepNow();
-        if (heatProgramstep != null) {
-            return heatProgramstep.getHereTemp();
-        } else {
-            return defaultHereTemp;
-        }      
+        synchronized(this) {
+            HeatProgramStep heatProgramstep = getHeatProgramStepNow();
+            if (heatProgramstep != null) {
+                return heatProgramstep.getHereTemp();
+            } else {
+                return defaultHereTemp;
+            }  
+        }
     }
  
  /**
@@ -193,12 +195,14 @@ public class HeatingProgram {
   * @return absent temperatur
   */
     public double getAbsentTempNow() {
-        HeatProgramStep heatProgramstep = getHeatProgramStepNow();
-        if (heatProgramstep != null) {
-            return heatProgramstep.getAbsentTemp();
-        } else {
-            return defaultAbsentTemp;
-        }      
+        synchronized(this) {
+            HeatProgramStep heatProgramstep = getHeatProgramStepNow();
+            if (heatProgramstep != null) {
+                return heatProgramstep.getAbsentTemp();
+            } else {
+                return defaultAbsentTemp;
+            }  
+        }
     }
     
     public HeatProgramStep getHeatProgramStepNow() {

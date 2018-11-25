@@ -4,13 +4,12 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/pi/JavaProgramme/HeatingControl/src/de/dirkgasser/heating/HeatingControl.java</file>
-            <file>file:/home/pi/JavaProgramme/HeatingControl/src/de/dirkgasser/heating/DHT11.java</file>
             <file>file:/home/pi/JavaProgramme/HeatingControl/src/de/dirkgasser/heating/MoveSensorListner.java</file>
-            <file>file:/home/pi/JavaProgramme/HeatingControl/src/de/dirkgasser/heating/HeatingProgram.java</file>
             <file>file:/home/pi/JavaProgramme/HeatingControl/src/de/dirkgasser/heating/JFHeatingControl.java</file>
             <file>file:/home/pi/JavaProgramme/HeatingControl/src/de/dirkgasser/heating/HeatProgramStep.java</file>
             <file>file:/home/pi/JavaProgramme/HeatingControl/src/de/dirkgasser/heating/HeatingControlThread.java</file>
             <file>file:/home/pi/JavaProgramme/HeatingControl/src/de/dirkgasser/heating/Relais.java</file>
+            <file>file:/home/pi/JavaProgramme/HeatingControl/src/de/dirkgasser/heating/Buzzer.java</file>
         </group>
     </open-files>
 </project-private>
