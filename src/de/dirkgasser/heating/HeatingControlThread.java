@@ -35,14 +35,14 @@ public class HeatingControlThread implements Runnable {
         started = false;
 
         try {
-             dht11 = new DHT11(7);
+             dht11 = new DHT11(27);
         } catch (InstantiationException ex) {
             Logger.getLogger(HeatingControlThread.class.getName()).log(Level.SEVERE, null, ex);
 
         }
         
-        heatPanel = new Relais(12, gpio);
-        buzzer = new Buzzer(28,gpio);
+        heatPanel = new Relais(29, gpio);
+        buzzer = new Buzzer(26,gpio);
         manual = false;
         manualTemp = 0;
         alarmOff = LocalTime.of(0, 0, 0);

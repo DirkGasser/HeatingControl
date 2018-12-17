@@ -8,6 +8,7 @@ import java.util.Locale;
 import javax.swing.JOptionPane;
 import static de.dirkgasser.heating.HeatingControl.heatingProgram;
 import java.awt.Color;
+import java.time.LocalDate;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
 
 /**
@@ -31,6 +32,7 @@ public class JFHeatingControl extends javax.swing.JFrame {
        tempToBe = 0;
        numberFormat = NumberFormat.getNumberInstance(Locale.GERMAN);
        ((DecimalFormat) numberFormat).applyPattern("###.#"); 
+       heatingProgram.setCurrentDay(LocalDate.now().getDayOfWeek().getValue());
        displayedHeatDay = heatingProgram.getCurrentHeatDay();
        jLday.setText(heatingProgram.getNameOfDay());
        jLHereDefTemp.setText(numberFormat.format(heatingProgram.getDefaultHereTemp()) + " °C ");
@@ -38,6 +40,7 @@ public class JFHeatingControl extends javax.swing.JFrame {
        jLMInDefAbsent.setText(String.valueOf(heatingProgram.getNoMovetoAbsent()));
        jLTolAbsentDef.setText(String.valueOf(heatingProgram.getMoveToBeThereMin()));
        jLHumidityDef.setText(String.valueOf(heatingProgram.getAlarmhumidity()) + " %");
+       displayedHeatDay.setStep(0);
        if (displayedHeatDay.getFirstStep() != null) {
             jLstartTime.setText(displayedHeatDay.getFirstStep().getStartTimeAsString());
             jLendTime.setText(displayedHeatDay.getFirstStep().getEndTimeAsString());

@@ -104,13 +104,21 @@ public class HeatDay {
  * get heating step
  * @return first HeatProgramStep of heating day
  */     
-    public HeatProgramStep getStep(int positon) {  
+    public HeatProgramStep getStep(int position) {  
         synchronized(this) {
-            if (positon  < listOfSteps.size() && positon >= 0) {
-                return listOfSteps.get(positon); 
+            if (position  < listOfSteps.size() && position >= 0) {
+                return listOfSteps.get(position); 
             } else {
                 return null;
             }
+        }
+    }
+    
+    public void setStep(int position) {
+        synchronized(this) {
+            if (position  < listOfSteps.size() && position >= 0) {
+                currentStep = position; 
+            } 
         }
     }
 

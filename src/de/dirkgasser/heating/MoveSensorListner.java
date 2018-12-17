@@ -51,6 +51,7 @@ public class MoveSensorListner implements GpioPinListenerDigital {
                 detectionCount = 1;
             }
             lastDetection = LocalTime.now();
+            System.out.println("Move Sensor: " + gpdsce.getState());
         }
     }
     

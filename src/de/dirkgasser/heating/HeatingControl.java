@@ -57,7 +57,7 @@ public static void main(String args[]) throws IOException {
                 mainscreen.setVisible(true);
             }
         });
-       moveSensor = new MoveSensorListner(gpio, 4);
+       moveSensor = new MoveSensorListner(gpio, 28);
 
        try {
                 Thread.sleep(3000);

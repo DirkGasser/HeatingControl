@@ -32,7 +32,7 @@ public class Relais {
     }
     
     public void setOn() {
-        pinoutd.high();                               
+        pinoutd.high();  
     }
     public void setOff() {
         pinoutd.low();
