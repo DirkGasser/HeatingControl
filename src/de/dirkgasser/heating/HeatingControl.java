@@ -52,6 +52,7 @@ public static void main(String args[]) throws IOException {
 //        gpio = GpioFactory.getInstance();     
        Thread thTemp = new Thread(new HeatingControlThread());
        
+       FullScreen.fullScreen(mainscreen, false);
        java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 mainscreen.setVisible(true);

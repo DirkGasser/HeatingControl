@@ -107,7 +107,7 @@ public class HeatingControlThread implements Runnable {
 
             java.awt.EventQueue.invokeLater(this);
             try {
-                Thread.sleep(5000);
+                Thread.sleep(10000);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(HeatingControlThread.class.getName()).log(Level.SEVERE, null, ex);
                     System.out.println("ich bin ex");

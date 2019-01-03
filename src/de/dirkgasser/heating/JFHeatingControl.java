@@ -8,6 +8,7 @@ import java.util.Locale;
 import javax.swing.JOptionPane;
 import static de.dirkgasser.heating.HeatingControl.heatingProgram;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.time.LocalDate;
 import static javax.swing.JOptionPane.YES_NO_OPTION;
 
@@ -21,6 +22,9 @@ public class JFHeatingControl extends javax.swing.JFrame {
     private NumberFormat numberFormat;
     private HeatDay displayedHeatDay;
     private DateTimeFormatter dtf;
+    double width = 480;
+    double height = 320;
+    Dimension dim;
     /**
      * Creates new form JFHeatingControl
      */
@@ -28,6 +32,10 @@ public class JFHeatingControl extends javax.swing.JFrame {
        initComponents();
        this.dispose();
        this.setUndecorated(true);
+       dim = new Dimension();
+       dim.setSize(width, height);
+       this.setMinimumSize(dim);
+       this.setPreferredSize(dim);
        dtf = DateTimeFormatter.ofPattern("HH:mm");
        tempToBe = 0;
        numberFormat = NumberFormat.getNumberInstance(Locale.GERMAN);

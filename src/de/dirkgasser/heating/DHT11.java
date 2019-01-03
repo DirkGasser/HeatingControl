@@ -3,6 +3,7 @@ package de.dirkgasser.heating;
 
 import com.pi4j.wiringpi.Gpio;
 import java.time.LocalTime;
+import java.lang.Math;
 
 /**
  * Read Temperatur and Humadity from DHT11 / 22
@@ -13,7 +14,12 @@ public class DHT11 {
     private final int[]         dht11_dat   = { 0, 0, 0, 0, 0 };
     private int pin;
     private double temp;
+    private float temps[] = new float[10];
+    private int arrayPos = 0;
+    private float avgTemp;
     private double humidity;
+    private float humidities[] = new float[10];
+    private float avgHumidity; 
     private LocalTime lastRead;
     private int counters[] = new int[100];
     private int sumCounters;
@@ -27,6 +33,9 @@ public class DHT11 {
         temp = 0;
         humidity = 0;
         lastRead = LocalTime.of(0, 0);
+        for (int i = 0; i < 10; i++) {
+            temps[i] = 0;
+        }
     }
 
     private void getValues() {
@@ -139,8 +148,22 @@ public class DHT11 {
                 if ((dht11_dat[2] & 0x80) != 0) {
                  c = -c;
                 }
-                temp = c;
-                humidity = h;
+                temps[arrayPos] = c;
+                humidities[arrayPos] = h;
+                arrayPos++;
+                if (arrayPos > 9) {arrayPos = 0;}
+                avgTemp = 0;
+                avgHumidity = 0;
+                for (int i = 0; i < 10; i++) {
+                    avgTemp += temps[i] / 10;
+                    avgHumidity += humidities[i] / 10;
+                }
+                if (Math.abs((double)(c - avgTemp)) < 8) {
+                    temp = c;
+                }
+                if (Math.abs((double)(h - avgHumidity)) < 10) {
+                    humidity = h;
+                }
                 lastRead = LocalTime.now(); 
             } else {
 // Data not good 
